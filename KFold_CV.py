@@ -6,14 +6,14 @@ from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 import numpy as np
 
-def KNN_Model(x_train, y_train):
-	knn = KNeighborsClassifier(n_neighbors = 5)
+def KNN_Model(x_train, y_train, k):
+	knn = KNeighborsClassifier(n_neighbors = k)
 	knn.fit(x_train, y_train)
 
 	return knn
 
-def KFoldCV(data_x, data_y):
-	kf = KFold(n_splits = 5)
+def KFoldCV(data_x, data_y, n_split):
+	kf = KFold(n_splits = n_split)
 	kf.get_n_splits(data_x)
 
 	train_x, test_x, train_y, test_y = ([] for i in range(4))
@@ -31,18 +31,19 @@ def KFoldCV(data_x, data_y):
 datasets = load_iris()
 data_train = datasets.data
 data_labels = datasets.target
-
-train, test = KFoldCV(data_train, data_labels)
+split = 5
+train, test = KFoldCV(data_train, data_labels, split)
 
 scores = []
-for i in range(5):
-	model = KNN_Model(train['x'][i], train['y'][i])
+k_neighbor = 5
+for i in range(split):
+	model = KNN_Model(train['x'][i], train['y'][i], k_neighbor)
 	prediction = model.predict(test['x'][i])
 	score = accuracy_score(test['y'][i], prediction)
 	score = score * 100
 	scores.append(score)
 
-plt.plot(range(5), scores)
+plt.plot(range(split), scores)
 plt.xlabel('Datasets Index')
 plt.ylabel('Accuracy Score')
 plt.show()
