@@ -6,14 +6,14 @@ from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Function for Initialize KNN Model
+# Inialisasi Fungsi untuk Model KNN
 def KNN_Model(x_train, y_train, k):
 	knn = KNeighborsClassifier(n_neighbors = k)
 	knn.fit(x_train, y_train)
 
 	return knn
 
-# Function for split data with K-Fold Cross Validation Algorithm
+# Fungsi untuk melakukan K-Fold Cross Validation
 def KFoldCV(data_x, data_y, n_split):
 	kf = KFold(n_splits = n_split)
 	kf.get_n_splits(data_x)
@@ -30,31 +30,36 @@ def KFoldCV(data_x, data_y, n_split):
 
 	return train_data, test_data
 
-# Initialize Datasets from Sklearn Library
+# Inialisasi dataset yang akan dipakai
 datasets = load_iris()
 data_train = datasets.data
 data_labels = datasets.target
 
-# Initialize number of split for K-Fold Cross Validation Algorithm
-# And Split the data with Function that has been made
+# Inialisasi jumlah n_split (jumlah fold / grup) dari K-Fold Cross Validation
+# Dan kemudian dataset tadi displit (dipisah) menggunakan fungsi K-Fold Cross Validation tadi
 split = 5
 train, test = KFoldCV(data_train, data_labels, split)
 
-# Initialize scores variable to store accuracy / score every datasets that had been splitted
-# Also Initialize number of K of KNN
+# Inialisasi variable scores yang akan digunakan untuk menyimpan semua akurasi dari setiap grup / folds
+# Juga dibawahnya inisialisasi K yang akan digunakan pada algorita KNN
 scores = []
 k_neighbor = 5
 
-# Loop the datasets that splitted earlier and use KNN Model to calculate every score
+# Dataset yang sudah displit tadi diloop dan dicari masing-masing akurasinya.
+# Lalu masing-masing akurasinya disimpan ke dalam scores
 for i in range(split):
 	model = KNN_Model(train['x'][i], train['y'][i], k_neighbor)
 	prediction = model.predict(test['x'][i])
 	score = accuracy_score(test['y'][i], prediction)
 	score = score * 100
 	scores.append(score)
+# Cari Mean (Rata-rata) score (akurasi) dari semua score yang sudah didapatkan
+mean_score = sum(scores) / len(scores)
 
-# All score that had been stored, plotted with matplotlib library to show which cluster has better score
+# Seluruh score yang didapatkan tadi juga dapat diplotkan dengan library matplotlib
+# Agar perubahan akurasi yang didapatkan dapat dilihat dengan lebih baik dengan menggunakan grafik
 plt.plot(range(split), scores)
 plt.xlabel('Datasets Index')
 plt.ylabel('Accuracy Score')
+plt.text(0.0, 102.0, 'Mean Accuracy ' + str(round(mean_score,2)) + '%', fontsize=10)
 plt.show()
