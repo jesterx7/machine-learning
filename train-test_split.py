@@ -25,5 +25,5 @@ prediction = model.predict(test_x)
 score = accuracy_score(test_y, prediction)
 score = score * 100
 
+# Hasil Akurasi Yang didapatkan dalam bentuk persentase
 print('Accuracy Score : ' + str(score) + '%')
-print(len(data_train))
